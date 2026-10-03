@@ -25,7 +25,7 @@ if __name__ == '__main__':
     Thread(target=run_flask).start()
 
     # توکن واقعی خودت رو اینجا بگذار
-    TOKEN = '7709501876:AAEKDcR0bdd35Me8DqjogJb-Vkn0_DkUbgI'
+    TOKEN = '7709501876:AAHhWo4tVOA1_bHhF1OGkGKYFajA8Obr1MA'
 
     app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(CommandHandler('start', start))
