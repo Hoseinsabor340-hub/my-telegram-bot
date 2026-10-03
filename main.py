@@ -13,7 +13,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 if __name__ == '__main__':
     # توکن رباتت رو بین دو کوتیشن قرار بده
-    TOKEN = 'YOUR_BOT_TOKEN_HERE'
+    TOKEN = '7709501876:AAEKDcR0bdd35Me8DqjogJb-Vkn0_DkUbgI'
     
     app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(CommandHandler('start', start))
