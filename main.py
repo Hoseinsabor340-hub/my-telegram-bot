@@ -27,8 +27,7 @@ def run_flask():
     app_web.run(host='0.0.0.0', port=port)
 
 # =====================================
-# TOKEN
-# ⚠️ حتماً توکن خود را بین دو کوتیشن قرار دهید
+# TOKEN (توکن ربات خود را بین دو کوتیشن قرار دهید)
 # =====================================
 
 TOKEN = "7709501876:AAHhWo4tVOA1_bHhF1OGkGKYFajA8Obr1MA"
@@ -55,7 +54,7 @@ async def is_admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 def get_keyboard():
     keyboard = [
-        ["🔴𝑅𝑂𝐿𝐿³🟢", "🌀𝑀𝐷/𝑆𝑀🐦‍‍ف"],
+        ["🔴𝑅𝑂𝐿𝐿³🟢", "🌀𝑀𝐷/𝑆𝑀🐦‍🔥"],
         ["🛡𝑆𝑈𝑃𝑅 𝐷𝐹🛡", "🗡𝑆𝑈𝑃𝑅 𝐾𝐴𝑇𝐴𝑁𝐴🗡"],
         ["⛓𝑆𝐸𝐴𝐿", "🗡𝐾𝐴𝑇𝐴𝑁𝐴🗡"],
         ["🛡𝐷𝐹 𝐾𝐴𝑇𝐴𝑁𝐴/𝑇𝐴𝐼𝐽𝑈🛡", "💪𝑇𝐴𝐼𝐽𝑈𝑇𝑆𝑈💪"],
@@ -110,22 +109,18 @@ async def roll_action(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chance = random.random()
     
     if chance < 0.75:
-        # حالت مثبت (75% احتمال)
         result1 = random.randint(1, 9)
         red1 = random.randint(1, 10 - result1)
         green1 = red1 + result1
     elif chance < 0.95:
-        # حالت منفی (20% احتمال)
         result1 = random.randint(-9, -1)
         green1 = random.randint(1, 10 + result1)
         red1 = green1 - result1
     else:
-        # حالت صفر (5% احتمال)
         green1 = random.randint(1, 10)
         red1 = green1
         result1 = 0
 
-    # محاسبه ROLL 2 (عدد مثبت از 1 تا 10)
     result2 = random.randint(1, 10)
 
     response_message = (
@@ -167,10 +162,10 @@ async def supr_katana_action(update: Update, context: ContextTypes.DEFAULT_TYPE)
 # 5. SEAL
 async def seal_action(update: Update, context: ContextTypes.DEFAULT_TYPE):
     options = [
-        "⛓𝟭𝗦𝗘𝗔𝗟\n🔋𝟭𝟬𝗕/𝗘𝗡", "⛓𝟮𝗦𝗘𝗔𝗟\n🔋𝟮𝟬𝗕/𝗘𝗡",
-        "⛓𝟯𝗦𝗘𝗔𝗟\n🔋𝟯𝟬𝗕/𝗘𝗡", "⛓𝟬𝗦𝗘𝗔𝗟\n🔋𝟭𝟬𝗕/𝗘𝗡",
-        "⛓𝟬𝗦𝗘𝗔𝗟\n🔋𝟮𝟬𝗕/𝗘𝗡", "⛓𝟬𝗦𝗘𝗔𝗟\n🔋𝟯𝟬𝗕/𝗘𝗡",
-        "⛓𝟬𝗦𝗘𝗔𝗟\n🔋𝟬𝗕/𝗘𝗡"
+        "⛓𝟭𝗦𝗘𝗔🇱\n🔋𝟭𝟬𝗕/𝗘𝗡", "⛓𝟮𝗦𝗘𝗔🇱\n🔋𝟮𝟬𝗕/𝗘𝗡",
+        "⛓𝟯𝗦𝗘𝗔🇱\n🔋𝟯𝟬𝗕/𝗘𝗡", "⛓𝟬𝗦𝗘𝗔🇱\n🔋𝟭𝟬𝗕/𝗘𝗡",
+        "⛓𝟬𝗦𝗘𝗔🇱\n🔋𝟮𝟬𝗕/𝗘𝗡", "⛓𝟬𝗦𝗘𝗔🇱\n🔋𝟯𝟬𝗕/𝗘𝗡",
+        "⛓𝟬𝗦𝗘𝗔🇱\n🔋𝟬𝗕/𝗘𝗡"
     ]
     await update.message.reply_text(random.choice(options))
 
@@ -220,7 +215,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if text == "🔴𝑅𝑂𝐿𝐿³🟢":
         await roll_action(update, context)
-    elif text == "🌀𝑀𝐷/𝑆𝑀🐦‍ف":
+    elif text == "🌀𝑀𝐷/𝑆𝑀🐦‍🔥":
         await md_sm_action(update, context)
     elif text == "🛡𝑆𝑈𝑃𝑅 𝐷𝐹🛡":
         await supr_df_action(update, context)
