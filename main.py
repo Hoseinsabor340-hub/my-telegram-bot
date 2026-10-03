@@ -47,7 +47,7 @@ async def is_admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 def get_keyboard():
     keyboard = [
-        ["🔴𝑅𝑂𝐿𝐿³🟢", "🌀𝑀𝐷/𝑆𝑀🐦‍🔥"],
+        ["🔴𝑅𝑂𝐿𝐿³🟢", "🌀𝑀𝐷/𝑆𝑀🐦‍‍🔥"],
         ["🛡𝑆𝑈𝑃𝑅 𝐷𝐹🛡", "🗡𝑆𝑈𝑃𝑅 𝐾𝐴𝑇𝐴𝑁𝐴🗡"],
         ["⛓𝑆𝐸𝐴🇱", "🗡𝐾𝐴𝑇𝐴𝑁𝐴🗡"],
         ["🛡𝐷𝐹 𝐾𝐴𝑇𝐴𝑁𝐴/𝑇𝐴𝐼𝐽𝑈🛡", "💪𝑇𝐴𝐼𝐽𝑈𝑇𝑆𝑈💪"],
