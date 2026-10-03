@@ -1,22 +1,34 @@
-import logging
+import os
+import asyncio
+from flask import Flask
+from threading import Thread
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO
-)
+# ساخت وب‌سرور کوچک برای راضی نگه‌داشتن Render
+app_web = Flask('')
 
+@app_web.route('/')
+def home():
+    return "Bot is running!"
+
+def run_flask():
+    port = int(os.environ.get('PORT', 8080))
+    app_web.run(host='0.0.0.0', port=port)
+
+# کدهای ربات تلگرام
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_first_name = update.effective_user.first_name
-    await update.message.reply_text(f"سلام {user_first_name} عزیز! خوش اومدی. من یک ربات ۲۴ ساعته فعال هستم! 🤖")
+    await update.message.reply_text("فعال هستم!")
 
 if __name__ == '__main__':
-    # توکن رباتت رو بین دو کوتیشن قرار بده
+    # روشن کردن وب‌سرور در پس‌زمینه
+    Thread(target=run_flask).start()
+
+    # توکن واقعی خودت رو اینجا بگذار
     TOKEN = '7709501876:AAEKDcR0bdd35Me8DqjogJb-Vkn0_DkUbgI'
-    
+
     app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(CommandHandler('start', start))
     
-    print("ربات با موفقیت روشن شد...")
+    print("...ربات با موفقیت روشن شد")
     app.run_polling()
