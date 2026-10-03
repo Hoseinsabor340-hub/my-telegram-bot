@@ -3,32 +3,36 @@ import asyncio
 from flask import Flask
 from threading import Thread
 from telegram import Update
-from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
+from telegram.ext import Application, CommandHandler, ContextTypes
 
-# ساخت وب‌سرور کوچک برای راضی نگه‌داشتن Render
-app_web = Flask('')
+# وب‌سرور برای زنده نگه‌داشتن سرویس در Render
+app = Flask(__name__)
 
-@app_web.route('/')
+@app.route('/')
 def home():
-    return "Bot is running!"
+    return "Bot is alive!"
 
 def run_flask():
     port = int(os.environ.get('PORT', 8080))
-    app_web.run(host='0.0.0.0', port=port)
+    app.run(host='0.0.0.0', port=port)
 
-# کدهای ربات تلگرام
+# دستور start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("فعال هستم!")
 
-if __name__ == '__main__':
+def main():
     # روشن کردن وب‌سرور در پس‌زمینه
-    Thread(target=run_flask).start()
+    Thread(target=run_flask, daemon=True).start()
 
-    # توکن واقعی خودت رو اینجا بگذار
+    # توکن ربات خودت رو دقیقاً جای عبارت زیر بگذار
     TOKEN = '7709501876:AAHhWo4tVOA1_bHhF1OGkGKYFajA8Obr1MA'
 
-    app = ApplicationBuilder().token(TOKEN).build()
-    app.add_handler(CommandHandler('start', start))
-    
-    print("...ربات با موفقیت روشن شد")
-    app.run_polling()
+    # ساخت و اجرای ربات
+    application = Application.builder().token(TOKEN).build()
+    application.add_handler(CommandHandler("start", start))
+
+    print("Bot is starting...")
+    application.run_polling()
+
+if __name__ == '__main__':
+    main()
