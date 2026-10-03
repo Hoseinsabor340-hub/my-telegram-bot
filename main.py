@@ -12,336 +12,243 @@ from telegram.ext import (
     filters
 )
 
-
 # =====================================
-# FLASK WEB SERVER (برای Render)
+# FLASK WEB SERVER (برای آنلاین ماندن روی Render)
 # =====================================
 
-app_web = Flask(__name__)
-
+app_web = Flask('')
 
 @app_web.route('/')
 def home():
     return "RP Dice Bot is Alive!"
 
-
 def run_flask():
     port = int(os.environ.get('PORT', 8080))
-    app_web.run(
-        host='0.0.0.0',
-        port=port
-    )
-
+    app_web.run(host='0.0.0.0', port=port)
 
 # =====================================
-# TOKEN
+# TOKEN (توکن ربات خود را اینجا بگذارید)
 # =====================================
 
-TOKEN = ""
+TOKEN = "7709501876:AAHhWo4tVOA1_bHhF1OGkGKYFajA8Obr1MA"
 
-
-# ====7709501876:AAHhWo4tVOA1_bHhF1OGkGKYFajA8Obr1MA=================================
+# =====================================
 # کاربران فعال
 # =====================================
 
 active_users = {}
 
-
 # =====================================
 # بررسی ادمین
 # =====================================
 
-async def is_admin(
-    update: Update,
-    context: ContextTypes.DEFAULT_TYPE
-):
-
+async def is_admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
     member = await update.effective_chat.get_member(
         update.effective_user.id
     )
-
-    return member.status in [
-        "administrator",
-        "creator",
-        "owner"
-    ]
-
+    return member.status in ["administrator", "creator", "owner"]
 
 # =====================================
 # چیدمان دکمه‌ها
 # =====================================
 
 def get_keyboard():
-
     keyboard = [
-
-        [
-            "🔴𝑅𝑂𝐿𝐿³🟢",
-            "🌀𝑀𝐷/𝑆𝑀🐦‍🔥"
-        ],
-
-        [
-            "🛡𝑆𝑈𝑃𝑅 𝐷𝐹🛡",
-            "🗡𝑆𝑈𝑃𝑅 𝐾𝐴𝑇𝐴𝑁𝐴🗡"
-        ],
-
-        [
-            "⛓𝑆𝐸𝐴𝐿",
-            "🗡𝐾𝐴𝑇𝐴𝑁𝐴🗡"
-        ],
-
-        [
-            "🛡𝐷𝐹 𝐾𝐴𝑇𝐴𝑁𝐴/𝑇𝐴𝐼𝐽𝑈🛡",
-            "💪𝑇𝐴𝐼𝐽𝑈𝑇𝑆𝑈💪"
-        ],
-
-        [
-            "🦾𝑇𝐴𝐼𝑌𝑈𝑇𝑆𝑈🦾"
-        ]
+        ["🔴𝑅𝑂𝐿𝐿³🟢", "🌀𝑀𝐷/𝑆𝑀🐦‍🔥"],
+        ["🛡𝑆𝑈𝑃𝑅 𝐷𝐹🛡", "🗡𝑆𝑈𝑃𝑅 𝐾𝐴𝑇𝐴𝑁𝐴🗡"],
+        ["⛓𝑆𝐸𝐴𝐿", "🗡𝐾𝐴𝑇𝐴𝑁𝐴🗡"],
+        ["🛡𝐷𝐹 𝐾𝐴𝑇𝐴𝑁𝐴/𝑇𝐴𝐼𝐽𝑈🛡", "💪𝑇𝐴𝐼𝐽𝑈𝑇𝑆𝑈💪"],
+        ["🦾𝑇𝐴𝐼𝐽𝑈𝑇𝑆𝑈🦾"]
     ]
-
-    return ReplyKeyboardMarkup(
-        keyboard,
-        resize_keyboard=True,
-        selective=True
-    )
-
-
-# =====================================
-# بررسی فعال بودن کاربر
-# =====================================
+    return ReplyKeyboardMarkup(keyboard, resize_keyboard=True, selective=True)
 
 def is_user_active(chat_id, user_id):
-
-    return active_users.get(
-        (chat_id, user_id),
-        False
-    )
-
+    return active_users.get((chat_id, user_id), False)
 
 # =====================================
-# /ON
+# دستورات ON / OFF / START
 # =====================================
 
-async def bot_on(
-    update: Update,
-    context: ContextTypes.DEFAULT_TYPE
-):
-
-    if update.effective_chat.type == "private":
-        return
-
-    if not await is_admin(update, context):
+async def bot_on(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.effective_chat.type == "private" or not await is_admin(update, context):
         return
 
     chat_id = update.effective_chat.id
     user_id = update.effective_user.id
 
-    active_users[
-        (chat_id, user_id)
-    ] = True
+    active_users[(chat_id, user_id)] = True
+    await update.message.reply_text("✅ 𝐁𝐎𝐓 𝐎𝐍", reply_markup=get_keyboard())
 
-    await update.message.reply_text(
-        "✅ 𝐁𝐎𝐓 𝐎𝐍",
-        reply_markup=get_keyboard()
-    )
-
-
-# =====================================
-# /OFF
-# =====================================
-
-async def bot_off(
-    update: Update,
-    context: ContextTypes.DEFAULT_TYPE
-):
-
-    if update.effective_chat.type == "private":
-        return
-
-    if not await is_admin(update, context):
+async def bot_off(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.effective_chat.type == "private" or not await is_admin(update, context):
         return
 
     chat_id = update.effective_chat.id
     user_id = update.effective_user.id
 
-    active_users.pop(
-        (chat_id, user_id),
-        None
-    )
+    active_users.pop((chat_id, user_id), None)
+    await update.message.reply_text("❌ 𝐁𝐎𝐓 𝐎𝐅𝐅", reply_markup=ReplyKeyboardRemove(selective=True))
 
-    await update.message.reply_text(
-        "❌ 𝐁𝐎𝐓 𝐎𝐅𝐅",
-        reply_markup=ReplyKeyboardRemove(
-            selective=True
-        )
-    )
-
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("برای فعال کردن منو از /on استفاده کنید.")
 
 # =====================================
-# /START
+# توابع مربوط به هر دکمه
 # =====================================
 
-async def start(
-    update: Update,
-    context: ContextTypes.DEFAULT_TYPE
-):
-
-    await update.message.reply_text(
-        "برای فعال کردن منو از /on استفاده کنید."
-    )
-
-
-# =====================================
-# تبدیل عدد به فونت
-# =====================================
-
-def fancy_number(number):
-
-    return str(number).translate(
-        str.maketrans(
-            "0123456789",
-            "𝟬𝟭𝟮𝟯𝟰𝟱𝟲𝟳𝟴𝟵"
-        )
-    )
-
-
-# =====================================
-# ساخت یک رول
-#
-# 75٪ مثبت
-# 20٪ منفی
-# 5٪ صفر
-#
-# مثبت‌های پایین هم شانس خوبی دارند
-# =====================================
-
-def make_roll():
-
+# 1. ROLL (75% مثبت، 20% منفی، 5% صفر)
+async def roll_action(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chance = random.random()
-
-    # =================================
-    # مثبت
-    # =================================
-
+    
     if chance < 0.75:
-
-        result = random.choices(
-            [
-                1, 2, 3, 4, 5,
-                6, 7, 8, 9
-            ],
-            weights=[
-                10, 11, 11, 10, 10,
-                9, 8, 7, 6
-            ],
-            k=1
-        )[0]
-
-        red = random.randint(
-            1,
-            10 - result
-        )
-
-        green = red + result
-
-        return red, green, result
-
-
-    # =================================
-    # منفی
-    # =================================
-
+        # حالت مثبت (75% احتمال)
+        result1 = random.randint(1, 9)
+        red1 = random.randint(1, 10 - result1)
+        green1 = red1 + result1
     elif chance < 0.95:
-
-        result = random.choices(
-            [
-                -1, -2, -3, -4, -5,
-                -6, -7, -8, -9
-            ],
-            weights=[
-                10, 10, 9, 8, 7,
-                6, 5, 4, 3
-            ],
-            k=1
-        )[0]
-
-        green = random.randint(
-            1,
-            10 + result
-        )
-
-        red = green - result
-
-        return red, green, result
-
-
-    # =================================
-    # صفر
-    # =================================
-
+        # حالت منفی (20% احتمال)
+        result1 = random.randint(-9, -1)
+        green1 = random.randint(1, 10 + result1)
+        red1 = green1 - result1
     else:
+        # حالت صفر (5% احتمال)
+        green1 = random.randint(1, 10)
+        red1 = green1
+        result1 = 0
 
-        number = random.randint(
-            1,
-            10
-        )
+    # محاسبه ROLL 2 (عدد مثبت از 1 تا 10)
+    result2 = random.randint(1, 10)
 
-        return number, number, 0
+    response_message = (
+        f"𝗥𝗢𝗟𝗟 𝟭 🔴-{red1}\n"
+        f"                       = 🟢+{green1}\n"
+        f"𝗥𝗢𝗟𝗟 𝟮 🟢+{result2}"
+    )
 
+    await update.message.reply_text(response_message)
+
+# 2. MD/SM
+async def md_sm_action(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    options = [
+        "🌀𝟭𝗠𝗗/𝗦𝗠\n🔋𝟭𝟬𝗕/𝗘𝗡", "🌀𝟮𝗠𝗗/𝗦𝗠\n🔋𝟮𝟬𝗕/𝗘𝗡",
+        "🌀𝟯𝗠𝗗/𝗦𝗠\n🔋𝟯𝟬𝗕/𝗘𝗡", "🌀𝟰𝗠𝗗/𝗦𝗠\n🔋𝟰𝟬𝗕/𝗘𝗡",
+        "🌀𝟱𝗠𝗗/𝗦𝗠\n🔋𝟱𝟬𝗕/𝗘𝗡", "🌀𝟬𝗠𝗗/𝗦𝗠\n🔋𝟭𝟬𝗕/𝗘𝗡",
+        "🌀𝟬𝗠𝗗/𝗦𝗠\n🔋𝟮𝟬𝗕/𝗘𝗡", "🌀𝟬𝗠𝗗/𝗦𝗠\n🔋𝟯𝟬𝗕/𝗘𝗡",
+        "🌀𝟬𝗠𝗗/𝗦𝗠\n🔋𝟰𝟬𝗕/𝗘𝗡", "🌀𝟬𝗠𝗗/𝗦𝗠\n🔋𝟱𝟬𝗕/𝗘𝗡",
+        "🌀𝟬𝗠𝗗/𝗦𝗠\n🔋𝟬𝗕/𝗘𝗡"
+    ]
+    await update.message.reply_text(random.choice(options))
+
+# 3. SUPR DF
+async def supr_df_action(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    options = [
+        "🛡𝟭𝗗𝗙\n🔋𝟮𝟬𝗕/𝗘𝗡", "🛡𝟮𝗗𝗙\n🔋𝟯𝟬𝗕/𝗘𝗡",
+        "🛡𝟯𝗗𝗙\n🔋𝟰𝟬𝗕/𝗘𝗡", "🛡𝟰𝗗𝗙\n🔋𝟱𝟬𝗕/𝗘𝗡",
+        "🛡𝟱𝗗𝗙\n🔋𝟲𝟬𝗕/𝗘𝗡", "🛡𝟬𝗗𝗙\n🔋𝟮𝟬𝗕/𝗘𝗡",
+        "🛡𝟬𝗗𝗙\n🔋𝟰𝟬𝗕/𝗘𝗡", "🛡𝟬𝗗𝗙\n🔋𝟱𝟬𝗕/𝗘𝗡",
+        "🛡𝟬𝗗𝗙\n🔋𝟲𝟬𝗕/𝗘𝗡", "🛡𝟬𝗗𝗙\n🔋𝟬𝗕/𝗘𝗡"
+    ]
+    await update.message.reply_text(random.choice(options))
+
+# 4. SUPR KATANA
+async def supr_katana_action(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    options = ["🗡𝟮𝟱𝗛𝗣", "🗡𝟯𝟬𝗛𝗣", "🗡𝟯𝟱𝗛𝗣", "🗡𝟰𝟬𝗛𝗣"]
+    await update.message.reply_text(random.choice(options))
+
+# 5. SEAL
+async def seal_action(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    options = [
+        "⛓𝟭𝗦𝗘𝗔𝗟\n🔋𝟭𝟬𝗕/𝗘𝗡", "⛓𝟮𝗦𝗘𝗔𝗟\n🔋𝟮𝟬𝗕/𝗘𝗡",
+        "⛓𝟯𝗦𝗘𝗔𝗟\n🔋𝟯𝟬𝗕/𝗘𝗡", "⛓𝟬𝗦𝗘𝗔𝗟\n🔋𝟭𝟬𝗕/𝗘𝗡",
+        "⛓𝟬𝗦𝗘𝗔𝗟\n🔋𝟮𝟬𝗕/𝗘𝗡", "⛓𝟬𝗦𝗘𝗔𝗟\n🔋𝟯𝟬𝗕/𝗘𝗡",
+        "⛓𝟬𝗦𝗘𝗔𝗟\n🔋𝟬𝗕/𝗘𝗡"
+    ]
+    await update.message.reply_text(random.choice(options))
+
+# 6. KATANA
+async def katana_action(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    options = [
+        "🗡𝟭𝟱𝗛𝗣", "🗡𝟮𝟬𝗛𝗣", "🗡𝟮𝟱𝗛𝗣", "🗡𝟯𝟬𝗛𝗣",
+        "🗡𝟯𝟱𝗛𝗣", "🗡𝟰𝟬𝗛𝗣", "🗡𝟰𝟱𝗛𝗣", "🗡𝟰𝟱𝗛𝗣",
+        "🗡𝟱𝟬𝗛𝗣", "🗡𝟱𝟱𝗛𝗣", "🗡𝟱𝗛𝗣-", "🗡𝟭𝟬𝗛𝗣-",
+        "🗡𝟭𝟱𝗛𝗣-", "🗡𝟮𝟬𝗛𝗣-", "🗡𝟮𝟱𝗛𝗣-"
+    ]
+    await update.message.reply_text(random.choice(options))
+
+# 7. DF KATANA/TAIJU
+async def df_katana_taiju_action(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    options = ["🛡𝟭𝗗𝗙", "🛡𝟮𝗗𝗙", "🛡𝟯𝗗𝗙", "🛡𝟰𝗗𝗙", "🛡𝟱𝗗𝗙", "🛡𝟬𝗗𝗙"]
+    await update.message.reply_text(random.choice(options))
+
+# 8. TAIJUTSU سبک
+async def taijutsu_light_action(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    options = [
+        "💪𝟭𝟬𝗛𝗣", "💪𝟭𝟱𝗛𝗣", "💪𝟮𝟬𝗛𝗣", "💪𝟮𝟱𝗛𝗣", "💪𝟯𝟬𝗛𝗣",
+        "💪𝟯𝟱𝗛𝗣", "💪𝟰𝟬𝗛𝗣", "💪𝟰𝟱𝗛𝗣", "💪𝟱𝟬𝗛𝗣", "💪𝟬𝗛𝗣"
+    ]
+    await update.message.reply_text(random.choice(options))
+
+# 9. TAIJUTSU سنگین
+async def taijutsu_heavy_action(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    options = [
+        "🦾𝟮𝟬𝗛𝗣", "🦾𝟮𝟱𝗛𝗣", "🦾𝟯𝟬𝗛𝗣", "🦾𝟯𝟱𝗛𝗣", "🦾𝟰𝟬𝗛𝗣",
+        "🦾𝟰𝟱𝗛𝗣", "🦾𝟱𝟬𝗛𝗣", "🦾𝟱𝟱𝗛𝗣", "🦾𝟲𝟬𝗛𝗣", "🦾𝟬𝗛𝗣"
+    ]
+    await update.message.reply_text(random.choice(options))
 
 # =====================================
-# ROLL
+# پردازش دکمه‌ها
 # =====================================
 
-async def roll_action(
-    update: Update,
-    context: ContextTypes.DEFAULT_TYPE
-):
+async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    chat_id = update.effective_chat.id
+    user_id = update.effective_user.id
 
-    # دو رول
-    red1, green1, result1 = make_roll()
+    if not is_user_active(chat_id, user_id):
+        return
 
-    red2, green2, result2 = make_roll()
+    text = update.message.text
 
+    if text == "🔴𝑅𝑂𝐿𝐿³🟢":
+        await roll_action(update, context)
+    elif text == "🌀𝑀𝐷/𝑆𝑀🐦‍🔥":
+        await md_sm_action(update, context)
+    elif text == "🛡𝑆𝑈𝑃𝑅 𝐷𝐹🛡":
+        await supr_df_action(update, context)
+    elif text == "🗡𝑆𝑈𝑃𝑅 𝐾𝐴𝑇𝐴𝑁𝐴🗡":
+        await supr_katana_action(update, context)
+    elif text == "⛓𝑆𝐸𝐴𝐿":
+        await seal_action(update, context)
+    elif text == "🗡𝐾𝐴𝑇𝐴𝑁𝐴🗡":
+        await katana_action(update, context)
+    elif text == "🛡𝐷𝐹 𝐾𝐴𝑇𝐴𝑁𝐴/𝑇𝐴𝐼𝐽𝑈🛡":
+        await df_katana_taiju_action(update, context)
+    elif text == "💪𝑇𝐴𝐼𝐽𝑈𝑇𝑆𝑈💪":
+        await taijutsu_light_action(update, context)
+    elif text == "🦾𝑇𝐴𝐼𝐽𝑈𝑇𝑆𝑈🦾":
+        await taijutsu_heavy_action(update, context)
 
-    # =================================
-    # رول اول
-    # =================================
+# =====================================
+# اجرای ربات
+# =====================================
 
-    if result1 > 0:
+def main():
+    if TOKEN == "توکن_ربات_خود_را_اینجا_بگذارید" or not TOKEN:
+        raise ValueError("لطفاً توکن ربات خود را در متغیر TOKEN بگذارید!")
 
-        line1 = (
-            f"𝗥𝗢𝗟𝗟 𝟭 "
-            f"🔴-{fancy_number(red1)}"
-        )
+    Thread(target=run_flask, daemon=True).start()
 
-        line2 = (
-            f"                         "
-            f"= 🟢+{fancy_number(green1)}"
-        )
+    app = Application.builder().token(TOKEN).build()
 
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("on", bot_on))
+    app.add_handler(CommandHandler("off", bot_off))
+    app.add_handler(
+        MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message)
+    )
 
-    elif result1 < 0:
+    print("🤖 Bot is running...")
+    app.run_polling()
 
-        line1 = (
-            f"𝗥𝗢𝗟𝗟 𝟭 "
-            f"🟢-{fancy_number(green1)}"
-        )
-
-        line2 = (
-            f"                         "
-            f"= 🔴+{fancy_number(red1)}"
-        )
-
-
-    else:
-
-        line1 = (
-            f"𝗥𝗢𝗟𝗟 𝟭 "
-            f"🟢{fancy_number(green1)}"
-        )
-
-        line2 = (
-            f"                         "
-            f"= 🔴{fancy_number
+if __name__ == '__main__':
+    main()
