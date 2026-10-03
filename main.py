@@ -27,10 +27,11 @@ def run_flask():
     app_web.run(host='0.0.0.0', port=port)
 
 # =====================================
-# TOKEN (توکن ربات خود را اینجا بگذارید)
+# TOKEN
+# ⚠️ حتماً توکن خود را بین دو کوتیشن قرار دهید
 # =====================================
 
-TOKEN = '7709501876:AAHhWo4tVOA1_bHhF1OGkGKYFajA8Obr1MA'
+TOKEN = "7709501876:AAHhWo4tVOA1_bHhF1OGkGKYFajA8Obr1MA"
 
 # =====================================
 # کاربران فعال
@@ -54,7 +55,7 @@ async def is_admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 def get_keyboard():
     keyboard = [
-        ["🔴𝑅𝑂𝐿𝐿³🟢", "🌀𝑀𝐷/𝑆𝑀🐦‍🔥"],
+        ["🔴𝑅𝑂𝐿𝐿³🟢", "🌀𝑀𝐷/𝑆𝑀🐦‍‍ف"],
         ["🛡𝑆𝑈𝑃𝑅 𝐷𝐹🛡", "🗡𝑆𝑈𝑃𝑅 𝐾𝐴𝑇𝐴𝑁𝐴🗡"],
         ["⛓𝑆𝐸𝐴𝐿", "🗡𝐾𝐴𝑇𝐴𝑁𝐴🗡"],
         ["🛡𝐷𝐹 𝐾𝐴𝑇𝐴𝑁𝐴/𝑇𝐴𝐼𝐽𝑈🛡", "💪𝑇𝐴𝐼𝐽𝑈𝑇𝑆𝑈💪"],
@@ -70,7 +71,12 @@ def is_user_active(chat_id, user_id):
 # =====================================
 
 async def bot_on(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.effective_chat.type == "private" or not await is_admin(update, context):
+    if update.effective_chat.type == "private":
+        await update.message.reply_text("این دستور فقط در گروه کاربرد دارد.")
+        return
+
+    if not await is_admin(update, context):
+        await update.message.reply_text("شما ادمین گروه نیستید.")
         return
 
     chat_id = update.effective_chat.id
@@ -80,7 +86,10 @@ async def bot_on(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("✅ 𝐁𝐎𝐓 𝐎𝐍", reply_markup=get_keyboard())
 
 async def bot_off(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.effective_chat.type == "private" or not await is_admin(update, context):
+    if update.effective_chat.type == "private":
+        return
+
+    if not await is_admin(update, context):
         return
 
     chat_id = update.effective_chat.id
@@ -90,7 +99,7 @@ async def bot_off(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("❌ 𝐁𝐎𝐓 𝐎𝐅𝐅", reply_markup=ReplyKeyboardRemove(selective=True))
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("برای فعال کردن منو از /on استفاده کنید.")
+    await update.message.reply_text("سلام! برای فعال کردن دکمه‌ها در گروه، دستور /on را ارسال کنید.")
 
 # =====================================
 # توابع مربوط به هر دکمه
@@ -211,13 +220,13 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if text == "🔴𝑅𝑂𝐿𝐿³🟢":
         await roll_action(update, context)
-    elif text == "🌀𝑀𝐷/𝑆𝑀🐦‍🔥":
+    elif text == "🌀𝑀𝐷/𝑆𝑀🐦‍ف":
         await md_sm_action(update, context)
     elif text == "🛡𝑆𝑈𝑃𝑅 𝐷𝐹🛡":
         await supr_df_action(update, context)
     elif text == "🗡𝑆𝑈𝑃𝑅 𝐾𝐴𝑇𝐴𝑁𝐴🗡":
         await supr_katana_action(update, context)
-    elif text == "⛓𝑆𝐸𝐴𝐿":
+    elif text == "⛓𝑆𝐸𝐴🇱":
         await seal_action(update, context)
     elif text == "🗡𝐾𝐴𝑇𝐴𝑁𝐴🗡":
         await katana_action(update, context)
