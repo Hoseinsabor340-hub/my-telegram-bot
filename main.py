@@ -13,18 +13,18 @@ from telegram.ext import (
 )
 
 # =====================================
-# FLASK WEB SERVER (برای آنلاین ماندن روی Render)
+# FLASK WEB SERVER
 # =====================================
 
-app_web = Flask('')
+app = Flask(__name__)
 
-@app_web.route('/')
-def home():
-    return "RP Dice Bot is Alive!"
+@app.route('/')
+def index():
+    return "Bot is active!"
 
 def run_flask():
-    port = int(os.environ.get('PORT', 8080))
-    app_web.run(host='0.0.0.0', port=port)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host='0.0.0.0', port=port)
 
 # =====================================
 # TOKEN
@@ -33,24 +33,17 @@ def run_flask():
 TOKEN = "7709501876:AAHHWo4tVOA1_bHhF10GkGKYFajA80br1MA"
 
 # =====================================
-# کاربران فعال
+# ACTIVE USERS
 # =====================================
 
 active_users = {}
 
-# =====================================
-# بررسی ادمین
-# =====================================
-
 async def is_admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    member = await update.effective_chat.get_member(
-        update.effective_user.id
-    )
-    return member.status in ["administrator", "creator", "owner"]
-
-# =====================================
-# چیدمان دکمه‌ها
-# =====================================
+    try:
+        member = await update.effective_chat.get_member(update.effective_user.id)
+        return member.status in ["administrator", "creator", "owner"]
+    except Exception:
+        return False
 
 def get_keyboard():
     keyboard = [
@@ -61,13 +54,6 @@ def get_keyboard():
         ["🦾𝑇𝐴𝐼𝐽𝑈𝑇𝑆𝑈🦾"]
     ]
     return ReplyKeyboardMarkup(keyboard, resize_keyboard=True, selective=True)
-
-def is_user_active(chat_id, user_id):
-    return active_users.get((chat_id, user_id), False)
-
-# =====================================
-# دستورات ON / OFF / START
-# =====================================
 
 async def bot_on(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_chat.type == "private":
@@ -80,7 +66,6 @@ async def bot_on(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     chat_id = update.effective_chat.id
     user_id = update.effective_user.id
-
     active_users[(chat_id, user_id)] = True
     await update.message.reply_text("✅ 𝐁𝐎𝐓 𝐎𝐍", reply_markup=get_keyboard())
 
@@ -93,7 +78,6 @@ async def bot_off(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     chat_id = update.effective_chat.id
     user_id = update.effective_user.id
-
     active_users.pop((chat_id, user_id), None)
     await update.message.reply_text("❌ 𝐁𝐎𝐓 𝐎𝐅𝐅", reply_markup=ReplyKeyboardRemove(selective=True))
 
@@ -101,13 +85,11 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("سلام! برای فعال کردن دکمه‌ها در گروه، دستور /on را ارسال کنید.")
 
 # =====================================
-# توابع مربوط به هر دکمه
+# ACTIONS
 # =====================================
 
-# 1. ROLL (75% مثبت، 20% منفی، 5% صفر)
 async def roll_action(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chance = random.random()
-    
     if chance < 0.75:
         result1 = random.randint(1, 9)
         red1 = random.randint(1, 10 - result1)
@@ -119,19 +101,15 @@ async def roll_action(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         green1 = random.randint(1, 10)
         red1 = green1
-        result1 = 0
 
     result2 = random.randint(1, 10)
-
     response_message = (
         f"𝗥𝗢𝗟𝗟 𝟭 🔴-{red1}\n"
         f"                       = 🟢+{green1}\n"
         f"𝗥𝗢𝗟𝗟 𝟮 🟢+{result2}"
     )
-
     await update.message.reply_text(response_message)
 
-# 2. MD/SM
 async def md_sm_action(update: Update, context: ContextTypes.DEFAULT_TYPE):
     options = [
         "🌀𝟭𝗠𝗗/𝗦𝗠\n🔋𝟭𝟬𝗕/𝗘𝗡", "🌀𝟮𝗠𝗗/𝗦𝗠\n🔋𝟮𝟬𝗕/𝗘𝗡",
@@ -143,7 +121,6 @@ async def md_sm_action(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ]
     await update.message.reply_text(random.choice(options))
 
-# 3. SUPR DF
 async def supr_df_action(update: Update, context: ContextTypes.DEFAULT_TYPE):
     options = [
         "🛡𝟭𝗗𝗙\n🔋𝟮𝟬𝗕/𝗘𝗡", "🛡𝟮𝗗𝗙\n🔋𝟯𝟬𝗕/𝗘𝗡",
@@ -154,12 +131,10 @@ async def supr_df_action(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ]
     await update.message.reply_text(random.choice(options))
 
-# 4. SUPR KATANA
 async def supr_katana_action(update: Update, context: ContextTypes.DEFAULT_TYPE):
     options = ["🗡𝟮𝟱𝗛𝗣", "🗡𝟯𝟬𝗛𝗣", "🗡𝟯𝟱𝗛𝗣", "🗡𝟰𝟬𝗛𝗣"]
     await update.message.reply_text(random.choice(options))
 
-# 5. SEAL
 async def seal_action(update: Update, context: ContextTypes.DEFAULT_TYPE):
     options = [
         "⛓𝟭𝗦𝗘𝗔🇱\n🔋𝟭𝟬𝗕/𝗘𝗡", "⛓𝟮𝗦𝗘𝗔🇱\n🔋𝟮𝟬𝗕/𝗘𝗡",
@@ -169,7 +144,6 @@ async def seal_action(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ]
     await update.message.reply_text(random.choice(options))
 
-# 6. KATANA
 async def katana_action(update: Update, context: ContextTypes.DEFAULT_TYPE):
     options = [
         "🗡𝟭𝟱𝗛𝗣", "🗡𝟮𝟬𝗛𝗣", "🗡𝟮𝟱𝗛𝗣", "🗡𝟯𝟬𝗛𝗣",
@@ -179,12 +153,10 @@ async def katana_action(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ]
     await update.message.reply_text(random.choice(options))
 
-# 7. DF KATANA/TAIJU
 async def df_katana_taiju_action(update: Update, context: ContextTypes.DEFAULT_TYPE):
     options = ["🛡𝟭𝗗𝗙", "🛡𝟮𝗗𝗙", "🛡𝟯𝗗𝗙", "🛡𝟰𝗗𝗙", "🛡𝟱𝗗𝗙", "🛡𝟬𝗗𝗙"]
     await update.message.reply_text(random.choice(options))
 
-# 8. TAIJUTSU سبک
 async def taijutsu_light_action(update: Update, context: ContextTypes.DEFAULT_TYPE):
     options = [
         "💪𝟭𝟬𝗛𝗣", "💪𝟭𝟱𝗛𝗣", "💪𝟮𝟬𝗛𝗣", "💪𝟮𝟱𝗛𝗣", "💪𝟯𝟬𝗛𝗣",
@@ -192,7 +164,6 @@ async def taijutsu_light_action(update: Update, context: ContextTypes.DEFAULT_TY
     ]
     await update.message.reply_text(random.choice(options))
 
-# 9. TAIJUTSU سنگین
 async def taijutsu_heavy_action(update: Update, context: ContextTypes.DEFAULT_TYPE):
     options = [
         "🦾𝟮𝟬𝗛𝗣", "🦾𝟮𝟱𝗛𝗣", "🦾𝟯𝟬𝗛𝗣", "🦾𝟯𝟱𝗛𝗣", "🦾𝟰𝟬𝗛𝗣",
@@ -200,19 +171,14 @@ async def taijutsu_heavy_action(update: Update, context: ContextTypes.DEFAULT_TY
     ]
     await update.message.reply_text(random.choice(options))
 
-# =====================================
-# پردازش دکمه‌ها
-# =====================================
-
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_chat.id
     user_id = update.effective_user.id
 
-    if not is_user_active(chat_id, user_id):
+    if not active_users.get((chat_id, user_id), False):
         return
 
     text = update.message.text
-
     if text == "🔴𝑅𝑂𝐿𝐿³🟢":
         await roll_action(update, context)
     elif text == "🌀𝑀𝐷/𝑆𝑀🐦‍🔥":
@@ -233,26 +199,16 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await taijutsu_heavy_action(update, context)
 
 # =====================================
-# اجرای ربات
+# MAIN EXECUTION
 # =====================================
 
-def main():
-    if not TOKEN or TOKEN == "توکن_ربات_خود_را_اینجا_بگذارید":
-        raise ValueError("توکن نامعتبر است!")
-
-    Thread(target=run_flask, daemon=True).start()
-
-    app = Application.builder().token(TOKEN).build()
-
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("on", bot_on))
-    app.add_handler(CommandHandler("off", bot_off))
-    app.add_handler(
-        MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message)
-    )
-
-    print("🤖 Bot is running...")
-    app.run_polling()
-
 if __name__ == '__main__':
-    main()
+    Thread(target=run_flask, daemon=True).start()
+    
+    application = Application.builder().token(TOKEN).build()
+    application.add_handler(CommandHandler("start", start))
+    application.add_handler(CommandHandler("on", bot_on))
+    application.add_handler(CommandHandler("off", bot_off))
+    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+    
+    application.run_polling(drop_pending_updates=True)
