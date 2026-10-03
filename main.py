@@ -27,10 +27,10 @@ def run_flask():
     app_web.run(host='0.0.0.0', port=port)
 
 # =====================================
-# TOKEN (توکن ربات خود را بین دو کوتیشن قرار دهید)
+# TOKEN
 # =====================================
 
-TOKEN = "7709501876:AAHhWo4tVOA1_bHhF1OGkGKYFajA8Obr1MA"
+TOKEN = "7709501876:AAHHWo4tVOA1_bHhF10GkGKYFajA80br1MA"
 
 # =====================================
 # کاربران فعال
@@ -56,7 +56,7 @@ def get_keyboard():
     keyboard = [
         ["🔴𝑅𝑂𝐿𝐿³🟢", "🌀𝑀𝐷/𝑆𝑀🐦‍🔥"],
         ["🛡𝑆𝑈𝑃𝑅 𝐷𝐹🛡", "🗡𝑆𝑈𝑃𝑅 𝐾𝐴𝑇𝐴𝑁𝐴🗡"],
-        ["⛓𝑆𝐸𝐴𝐿", "🗡𝐾𝐴𝑇𝐴𝑁𝐴🗡"],
+        ["⛓𝑆𝐸𝐴🇱", "🗡𝐾𝐴𝑇𝐴𝑁𝐴🗡"],
         ["🛡𝐷𝐹 𝐾𝐴𝑇𝐴𝑁𝐴/𝑇𝐴𝐼𝐽𝑈🛡", "💪𝑇𝐴𝐼𝐽𝑈𝑇𝑆𝑈💪"],
         ["🦾𝑇𝐴𝐼𝐽𝑈𝑇𝑆𝑈🦾"]
     ]
@@ -237,8 +237,8 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # =====================================
 
 def main():
-    if TOKEN == "توکن_ربات_خود_را_اینجا_بگذارید" or not TOKEN:
-        raise ValueError("لطفاً توکن ربات خود را در متغیر TOKEN بگذارید!")
+    if not TOKEN or TOKEN == "توکن_ربات_خود_را_اینجا_بگذارید":
+        raise ValueError("توکن نامعتبر است!")
 
     Thread(target=run_flask, daemon=True).start()
 
