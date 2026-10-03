@@ -1,5 +1,6 @@
 import os
 import random
+import asyncio
 from flask import Flask
 from threading import Thread
 
@@ -47,7 +48,7 @@ async def is_admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 def get_keyboard():
     keyboard = [
-        ["🔴𝑅𝑂𝐿𝐿³🟢", "🌀𝑀𝐷/𝑆𝑀🐦‍‍🔥"],
+        ["🔴𝑅𝑂𝐿𝐿³🟢", "🌀𝑀𝐷/𝑆𝑀🐦‍🔥"],
         ["🛡𝑆𝑈𝑃𝑅 𝐷𝐹🛡", "🗡𝑆𝑈𝑃𝑅 𝐾𝐴𝑇𝐴𝑁𝐴🗡"],
         ["⛓𝑆𝐸𝐴🇱", "🗡𝐾𝐴𝑇𝐴𝑁𝐴🗡"],
         ["🛡𝐷𝐹 𝐾𝐴𝑇𝐴𝑁𝐴/𝑇𝐴𝐼𝐽𝑈🛡", "💪𝑇𝐴𝐼𝐽𝑈𝑇𝑆𝑈💪"],
@@ -202,7 +203,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # MAIN EXECUTION
 # =====================================
 
-if __name__ == '__main__':
+async def main():
     Thread(target=run_flask, daemon=True).start()
     
     application = Application.builder().token(TOKEN).build()
@@ -211,4 +212,14 @@ if __name__ == '__main__':
     application.add_handler(CommandHandler("off", bot_off))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
     
-    application.run_polling(drop_pending_updates=True)
+    async with application:
+        await application.start()
+        await application.updater.start_polling(drop_pending_updates=True)
+        # نگهداری برنامه در حالت اجرا
+        await asyncio.Event().wait()
+
+if __name__ == '__main__':
+    try:
+        asyncio.run(main())
+    except (KeyboardInterrupt, SystemExit):
+        pass
