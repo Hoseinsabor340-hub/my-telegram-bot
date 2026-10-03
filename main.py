@@ -30,7 +30,7 @@ def run_flask():
 # TOKEN (توکن ربات خود را اینجا بگذارید)
 # =====================================
 
-TOKEN = "7709501876:AAHhWo4tVOA1_bHhF1OGkGKYFajA8Obr1MA"
+TOKEN = '7709501876:AAHhWo4tVOA1_bHhF1OGkGKYFajA8Obr1MA'
 
 # =====================================
 # کاربران فعال
